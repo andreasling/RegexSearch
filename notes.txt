@@ -1,0 +1,6 @@
+(?:(?<=(?:class|namespace)\s+?)[a-zA-Z_][\w_]*?(?=[\s:{]))|(?:(?<=[{;(]\s*?[a-zA-Z_][\w_]*?\s+?)[a-zA-Z_][\w_]*?(?=[\s;=)]))
+
+variable declaration:
+(?<before>[{};]\s*?)(?<type>(?:[a-zA-Z_][\w_]*?\.)*?(?:[a-zA-Z_][\w_]*?))\s(?<variable>[a-zA-Z_][\w_]*?)(?<after>\s*?[;=])
+
+

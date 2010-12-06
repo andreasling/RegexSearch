@@ -3,6 +3,10 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual C# Express 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RegexSearchConsole", "RegexSearchConsole\RegexSearchConsole.csproj", "{8C82778E-3F9B-4BC1-A93B-413722A0DAFB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RegexSearch", "RegexSearch\RegexSearch.csproj", "{C536C5EA-31EB-464C-8676-48CFEEC34D07}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RegexSearchWin", "RegexSearchWin\RegexSearchWin.csproj", "{AA8BF51C-AE3B-434A-9E4C-F22E68AB05E4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -13,6 +17,14 @@ Global
 		{8C82778E-3F9B-4BC1-A93B-413722A0DAFB}.Debug|x86.Build.0 = Debug|x86
 		{8C82778E-3F9B-4BC1-A93B-413722A0DAFB}.Release|x86.ActiveCfg = Release|x86
 		{8C82778E-3F9B-4BC1-A93B-413722A0DAFB}.Release|x86.Build.0 = Release|x86
+		{C536C5EA-31EB-464C-8676-48CFEEC34D07}.Debug|x86.ActiveCfg = Debug|x86
+		{C536C5EA-31EB-464C-8676-48CFEEC34D07}.Debug|x86.Build.0 = Debug|x86
+		{C536C5EA-31EB-464C-8676-48CFEEC34D07}.Release|x86.ActiveCfg = Release|x86
+		{C536C5EA-31EB-464C-8676-48CFEEC34D07}.Release|x86.Build.0 = Release|x86
+		{AA8BF51C-AE3B-434A-9E4C-F22E68AB05E4}.Debug|x86.ActiveCfg = Debug|x86
+		{AA8BF51C-AE3B-434A-9E4C-F22E68AB05E4}.Debug|x86.Build.0 = Debug|x86
+		{AA8BF51C-AE3B-434A-9E4C-F22E68AB05E4}.Release|x86.ActiveCfg = Release|x86
+		{AA8BF51C-AE3B-434A-9E4C-F22E68AB05E4}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
