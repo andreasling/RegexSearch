@@ -3,12 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="DisplayFileWindow" Height="300" Width="300">
     <Grid>
-        <TextBlock Name="textBlock1" Text="TextBlock" FontFamily="Consolas">
-            <TextBlock.TextEffects>
-                <TextEffectCollection>
-                    <TextEffect Foreground="Red" PositionStart="1" PositionCount="5" />
-                </TextEffectCollection>
-            </TextBlock.TextEffects>
-        </TextBlock>
+        <RichTextBox Name="richTextBox1" FontFamily="Consolas" />
     </Grid>
 </Window>
