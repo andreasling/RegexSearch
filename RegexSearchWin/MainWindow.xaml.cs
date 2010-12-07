@@ -64,9 +64,19 @@ namespace RegexSearchWin
         {
             try
             {
+                if (string.IsNullOrEmpty(searchTextBox.Text))
+                {
+                    Results.Clear();
+                    return;
+                }
+
+                var regex = new Regex(searchTextBox.Text, RegexOptions.Compiled | RegexOptions.Singleline);
+
+                searchTextBox.Background = Brushes.White;
+
                 var results =
                     //index.BinarySearch(searchTextBox.Text);
-                    index.RegexSearch(new Regex(searchTextBox.Text));
+                    index.RegexSearch(regex);
 
                 //resultsListView.Items.Clear();
 
@@ -88,14 +98,19 @@ namespace RegexSearchWin
             }
             catch (ArgumentException)
             {
-                resultsListView.Items.Clear();
-                resultsListView.Items.Add(new { File = "<invalid regex>" });
+                Results.Clear();
+                searchTextBox.Background = Brushes.LightPink;
             }
         }
 
         private void resultsListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             int index = resultsListView.SelectedIndex;
+
+            if (index < 0)
+            {
+                return;
+            }
 
             var file = Results[index].FullPath;
 
