@@ -30,11 +30,10 @@ namespace RegexSearchWin
 
         public MainWindow()
         {
-            Results = new ObservableCollection<ResultListViewItem>();
             InitializeComponent();
 
+            Results = new ObservableCollection<ResultListViewItem>();
             DataContext = this;
-
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -62,25 +61,21 @@ namespace RegexSearchWin
 
         private void searchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            Results.Clear();
+
+            if (string.IsNullOrEmpty(searchTextBox.Text))
+            {
+                return;
+            }
+
             try
             {
+                var regex = new Regex(searchTextBox.Text);
+
                 var results =
                     //index.BinarySearch(searchTextBox.Text);
-                    index.RegexSearch(new Regex(searchTextBox.Text));
+                    index.RegexSearch(regex);
 
-                //resultsListView.Items.Clear();
-
-                //foreach (var item in results)
-                //{
-
-                //    resultsListView.Items.Add(
-
-                //        new { File = System.IO.Path.GetFileName(item), Path = System.IO.Path.GetDirectoryName(item) });		 
-                //}
-
-                //Results = new ObservableCollection<ResultListViewItem>(
-                //    from r in results select new ResultListViewItem() { FullPath = r });
-                Results.Clear();
                 foreach (var r in results)
                 {
                     Results.Add(new ResultListViewItem() { FullPath = r });
@@ -88,8 +83,6 @@ namespace RegexSearchWin
             }
             catch (ArgumentException)
             {
-                resultsListView.Items.Clear();
-                resultsListView.Items.Add(new { File = "<invalid regex>" });
             }
         }
 
