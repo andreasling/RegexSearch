@@ -23,9 +23,10 @@ namespace RegexSearchWin
             InitializeComponent();
         }
 
-        public DisplayFileWindow(string text, IEnumerable<HighLight> highLights)
+        public DisplayFileWindow(string file, string text, IEnumerable<HighLight> highLights)
             : this()
         {
+            textBox1.Text = file;
             textBlock1.Text = text;
             textBlock1.TextEffects = new TextEffectCollection(
                 from highLight in highLights

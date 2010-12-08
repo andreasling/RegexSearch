@@ -100,7 +100,9 @@ namespace RegexSearchWin
                 from Match m in Regex.Matches(text, searchTextBox.Text)
                 select new HighLight() { Start = m.Index, Count = m.Length };
 
-            new DisplayFileWindow(text, highLights).Show();
+            var dfw = new DisplayFileWindow(file, text, highLights);
+            dfw.Title = "Matches for: " + searchTextBox.Text;
+            dfw.Show();
         }
     }
 }
