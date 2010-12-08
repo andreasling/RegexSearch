@@ -62,6 +62,7 @@ namespace RegexSearchWin
         private void searchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             Results.Clear();
+            searchTextBox.Background = Brushes.White;
 
             if (string.IsNullOrEmpty(searchTextBox.Text))
             {
@@ -83,6 +84,7 @@ namespace RegexSearchWin
             }
             catch (ArgumentException)
             {
+                searchTextBox.Background = Brushes.Pink;
             }
         }
 
