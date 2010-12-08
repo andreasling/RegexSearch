@@ -15,6 +15,7 @@ using RegexSearch;
 using System.Text.RegularExpressions;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.ComponentModel;
 
 namespace RegexSearchWin
 {
@@ -56,7 +57,24 @@ namespace RegexSearchWin
 
         private void rebuildIndexButton_Click(object sender, RoutedEventArgs e)
         {
-            this.index = indexBuilder.BuildIndex();
+            rebuildIndexButton.IsEnabled = false;
+
+            var worker = new BackgroundWorker();
+
+            worker.DoWork += delegate(object s, DoWorkEventArgs args)
+            {
+                args.Result = indexBuilder.BuildIndex();
+
+            };
+
+            worker.RunWorkerCompleted += delegate(object s, RunWorkerCompletedEventArgs args)
+            {
+                this.index = args.Result as Index;
+
+                rebuildIndexButton.IsEnabled = true;
+            };
+
+            worker.RunWorkerAsync();
         }
 
         private void searchTextBox_TextChanged(object sender, TextChangedEventArgs e)
