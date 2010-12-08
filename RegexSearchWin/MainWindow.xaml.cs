@@ -58,7 +58,6 @@ namespace RegexSearchWin
         private void rebuildIndexButton_Click(object sender, RoutedEventArgs e)
         {
             rebuildIndexButton.IsEnabled = false;
-            //var buttonBackground = rebuildIndexButton.Background;
 
             var worker = new BackgroundWorker();
 
