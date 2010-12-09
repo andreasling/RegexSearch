@@ -88,30 +88,65 @@ namespace RegexSearchWin
         private void searchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             searchPattern = searchTextBox.Text;
-            Results.Clear();
-            searchTextBox.Background = Brushes.White;
 
-            if (!IsValidRegex(searchTextBox.Text))
+            if (IsValidRegex(searchTextBox.Text))
             {
-                return;
+                searchTextBox.Background = Brushes.White;
+                searchButton.IsEnabled = true;
             }
-
-            try
+            else
             {
-                var regex = new Regex(searchTextBox.Text);
+                searchTextBox.Background = Brushes.Pink;
+                searchButton.IsEnabled = false;
+            }
+        }
+
+        private void searchButton_Click(object sender, RoutedEventArgs e)
+        {
+            searchButton.IsEnabled = false;
+
+            var worker = new BackgroundWorker();
+
+            worker.DoWork += (object s, DoWorkEventArgs args) =>
+            {
+                var tempList = new List<ResultListViewItem>();
+
+                var searchRegex = new Regex(searchPattern, RegexOptions.Compiled | RegexOptions.Singleline);
 
                 var results =
                     index.Search(searchPattern);
 
-                foreach (var r in results)
+                foreach (var result in results)
                 {
-                    Results.Add(new ResultListViewItem() { FullPath = r });
+                    tempList.Add(new ResultListViewItem() { FullPath = result });
                 }
-            }
-            catch (ArgumentException)
+
+                args.Result = tempList;
+            };
+
+            worker.RunWorkerCompleted += (object s, RunWorkerCompletedEventArgs args) =>
             {
-                searchTextBox.Background = Brushes.Pink;
-            }
+                if (args.Error != null)
+                {
+                    System.Windows.Forms.MessageBox.Show(args.Error.Message);
+                }
+
+                Results.Clear();
+
+                if (args.Result != null)
+                {
+                    foreach (var results in args.Result as List<ResultListViewItem>)
+                    {
+                        Results.Add(results);
+                    }
+                }
+
+                textBlock1.Text = string.Format("files: {0}", Results.Count);
+
+                searchButton.IsEnabled = true;
+            };
+
+            worker.RunWorkerAsync();
         }
 
         private void resultsListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)

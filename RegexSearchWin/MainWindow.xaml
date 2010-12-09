@@ -13,5 +13,6 @@
                 </GridView>
             </ListView.View>
         </ListView>
+        <Button Content="Search" Height="23" HorizontalAlignment="Right" Name="searchButton" VerticalAlignment="Top" Width="95" Click="searchButton_Click" Margin="0,-1,0,0" />
     </Grid>
 </Window>
