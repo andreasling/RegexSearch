@@ -118,6 +118,11 @@ namespace RegexSearchWin
         {
             int index = resultsListView.SelectedIndex;
 
+            if (index < 0)
+            {
+                return;
+            }
+
             var file = Results[index].FullPath;
 
             var text = File.ReadAllText(file);
