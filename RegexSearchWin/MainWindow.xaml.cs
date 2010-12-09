@@ -141,6 +141,7 @@ namespace RegexSearchWin
                 textBlock1.Text = string.Format("files: {0}", Results.Count);
 
                 searchButton.IsEnabled = true;
+                searchButton.Background = Brushes.LightGreen;
             };
 
             worker.RunWorkerAsync();
@@ -182,6 +183,41 @@ namespace RegexSearchWin
                 folderPathTextBox.Text = folderBrowser.SelectedPath;
             }
         }
+
+        private void AutoIndexButton_Click(object sender, RoutedEventArgs e)
+        {
+            var worker = new BackgroundWorker();
+
+            worker.DoWork += (s, args) => 
+            {
+                var ps = args.Argument as string[];
+
+                FileSystemWatcher watcher = new FileSystemWatcher(ps[0], ps[1])
+                {
+                    IncludeSubdirectories = true, 
+                    NotifyFilter = NotifyFilters.DirectoryName | NotifyFilters.FileName | NotifyFilters.LastWrite
+                };
+
+                while (true)
+                {
+                    var results = watcher.WaitForChanged(WatcherChangeTypes.All, 1000);
+
+                    if (!results.TimedOut)
+                    {
+                        System.Diagnostics.Debug.WriteLine("watcher.WaitForChanged({0}): {1} -> {2}", results.ChangeType, results.OldName, results.Name);
+
+                        this.Dispatcher.Invoke((Action)(() => 
+                        {
+                            RebuildIndex();
+                            searchButton.Background = Brushes.Pink;
+                        }));
+                    }
+                }
+            };
+
+            worker.RunWorkerAsync(new[] {folderPathTextBox.Text, filePatternTextBox.Text});
+        }
+
         private bool IsValidRegex(string pattern)
         {
             try

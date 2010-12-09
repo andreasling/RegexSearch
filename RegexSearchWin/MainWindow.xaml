@@ -19,5 +19,6 @@
         <Button Content="..." Height="23" HorizontalAlignment="Right" Margin="0,0,0,29" Name="browseFolderButton" VerticalAlignment="Bottom" Width="38" Click="browseFolderButton_Click" />
         <TextBlock Height="23" Margin="0,0,303,58" Name="textBlock1" Text="TextBlock" VerticalAlignment="Bottom" />
         <Button Content="Search" Height="23" HorizontalAlignment="Right" Name="searchButton" VerticalAlignment="Top" Width="95" Click="searchButton_Click" Margin="0,-1,0,0" />
+        <Button Content="Autoindex" Margin="0,0,0,58" Name="AutoIndexButton" Height="23" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75" Click="AutoIndexButton_Click" />
     </Grid>
 </Window>
