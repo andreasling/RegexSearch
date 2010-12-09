@@ -91,7 +91,7 @@ namespace RegexSearchWin
             Results.Clear();
             searchTextBox.Background = Brushes.White;
 
-            if (string.IsNullOrEmpty(searchTextBox.Text))
+            if (!IsValidRegex(searchTextBox.Text))
             {
                 return;
             }
@@ -129,6 +129,20 @@ namespace RegexSearchWin
             var dfw = new DisplayFileWindow(file, text, highLights);
             dfw.Title = "Matches for: " + searchTextBox.Text;
             dfw.Show();
+        }
+
+        private bool IsValidRegex(string pattern)
+        {
+            try
+            {
+                new Regex(pattern);
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }
