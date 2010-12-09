@@ -43,9 +43,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BinarySearcher.cs" />
+    <Compile Include="RegexSearcher.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="Index.cs" />
     <Compile Include="IndexBuilder.cs" />
+    <Compile Include="IndexSearcher.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegexIndexBuilder.cs" />

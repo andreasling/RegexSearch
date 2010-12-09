@@ -23,21 +23,20 @@ namespace RegexSearchWin
             InitializeComponent();
         }
 
-        public DisplayFileWindow(string text, IEnumerable<HighLight> highLights)
+        public DisplayFileWindow(string file, string text, IEnumerable<HighLight> highLights)
             : this()
         {
-            richTextBox1.Document.Blocks.Clear();
-            richTextBox1.Document.Blocks.Add(new Paragraph(new Run(text.Replace("\r\n", "  "))));
-
-            int i = 0;
-            foreach (var highLight in highLights)
-            {
-                var start = richTextBox1.Document.ContentStart.GetPositionAtOffset(2 + highLight.Start);
-                var stop = start.GetPositionAtOffset(highLight.Count);
-                var range = new TextRange(start, stop);
-                range.ApplyPropertyValue(TextElement.BackgroundProperty, Brushes.Pink);
-                i += 10;
-            }
+            textBox1.Text = file;
+            textBlock1.Text = text;
+            textBlock1.TextEffects = new TextEffectCollection(
+                from highLight in highLights
+                select new TextEffect(
+                    Transform.Identity, 
+                    Brushes.Red, 
+                    null, 
+                    highLight.Start, 
+                    highLight.Count)
+                );
         }
     }
 }

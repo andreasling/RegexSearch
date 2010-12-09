@@ -15,6 +15,7 @@ using RegexSearch;
 using System.Text.RegularExpressions;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.ComponentModel;
 
 namespace RegexSearchWin
 {
@@ -23,84 +24,127 @@ namespace RegexSearchWin
     /// </summary>
     public partial class MainWindow : Window
     {
-        private IndexBuilder indexBuilder = null;
         private Index index = Index.Empty;
 
         public ObservableCollection<ResultListViewItem> Results { get; set; }
 
         public MainWindow()
         {
-            Results = new ObservableCollection<ResultListViewItem>();
             InitializeComponent();
 
+            Results = new ObservableCollection<ResultListViewItem>();
             DataContext = this;
-
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            var path =
-                //@"C:\Treserva\Dev\Prestanda1\S3\Arende\Source\Process";
-                //@"C:\Treserva\Dev\Prestanda1\S3\Arende\Source\";
-                //@"C:\Treserva\Dev\Prestanda1\S3\";
-                @"C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\";
-            var pattern = "*.cs";
-
-            var regex = new Regex(
-                //@"(?:(?<=(?:class|namespace)\s+?)[^\s:{]+?(?=[\s:{]))|(?:())", 
-                //"class", 
-                    @"(?:(?<=(?:class|namespace)\s+?)(?<identifier>[a-zA-Z_][\w_]*?)(?=[\s:{]))|(?:(?<=(?<before>[{};]\s*?)(?<type>(?:[a-zA-Z_][\w_]*?\.)*?(?:[a-zA-Z_][\w_]*?)(?:\<[^\>]+?\>)?)\s+?)(?<identifier>[a-zA-Z_][\w_]*?)(?=(?<after>\s*?[;=])))",
-                    RegexOptions.Compiled | RegexOptions.Singleline);
-
-            indexBuilder = new RegexIndexBuilder(path, pattern, regex);
         }
 
         private void rebuildIndexButton_Click(object sender, RoutedEventArgs e)
         {
-            this.index = indexBuilder.BuildIndex();
+            RebuildIndex();
         }
 
-        private void searchTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void RebuildIndex()
         {
+            rebuildIndexButton.IsEnabled = false;
+
+            var worker = new BackgroundWorker();
+
+            worker.DoWork += delegate(object s, DoWorkEventArgs args)
+            {
+                var indexBuilder = args.Argument as IndexBuilder;
+                args.Result = indexBuilder.BuildIndex();
+            };
+
+            worker.RunWorkerCompleted += delegate(object s, RunWorkerCompletedEventArgs args)
+            {
+                this.index = args.Result as Index;
+
+                //index.SetSearcher(new BinarySearcher());
+                index.SetSearcher(new RegexSearcher());
+
+                rebuildIndexButton.IsEnabled = true;
+            };
+
             try
             {
-                if (string.IsNullOrEmpty(searchTextBox.Text))
-                {
-                    Results.Clear();
-                    return;
-                }
+                var regex = new Regex(indexPatternTextBox.Text, RegexOptions.Compiled | RegexOptions.Singleline);
+                var ib = new RegexIndexBuilder(folderPathTextBox.Text, filePatternTextBox.Text, regex);
+                worker.RunWorkerAsync(ib);
+            }
+            catch (Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show(ex.Message);
 
-                var regex = new Regex(searchTextBox.Text, RegexOptions.Compiled | RegexOptions.Singleline);
+                rebuildIndexButton.IsEnabled = true;
+            }
+        }
 
+        private string searchPattern = string.Empty;
+        private void searchTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            searchPattern = searchTextBox.Text;
+
+            if (IsValidRegex(searchTextBox.Text))
+            {
                 searchTextBox.Background = Brushes.White;
+                searchButton.IsEnabled = true;
+            }
+            else
+            {
+                searchTextBox.Background = Brushes.Pink;
+                searchButton.IsEnabled = false;
+            }
+        }
+
+        private void searchButton_Click(object sender, RoutedEventArgs e)
+        {
+            searchButton.IsEnabled = false;
+
+            var worker = new BackgroundWorker();
+
+            worker.DoWork += (object s, DoWorkEventArgs args) =>
+            {
+                var tempList = new List<ResultListViewItem>();
+
+                var searchRegex = new Regex(searchPattern, RegexOptions.Compiled | RegexOptions.Singleline);
 
                 var results =
-                    //index.BinarySearch(searchTextBox.Text);
-                    index.RegexSearch(regex);
+                    index.Search(searchPattern);
 
-                //resultsListView.Items.Clear();
-
-                //foreach (var item in results)
-                //{
-
-                //    resultsListView.Items.Add(
-
-                //        new { File = System.IO.Path.GetFileName(item), Path = System.IO.Path.GetDirectoryName(item) });		 
-                //}
-
-                //Results = new ObservableCollection<ResultListViewItem>(
-                //    from r in results select new ResultListViewItem() { FullPath = r });
-                Results.Clear();
-                foreach (var r in results)
+                foreach (var result in results)
                 {
-                    Results.Add(new ResultListViewItem() { FullPath = r });
+                    tempList.Add(new ResultListViewItem() { FullPath = result });
                 }
-            }
-            catch (ArgumentException)
+
+                args.Result = tempList;
+            };
+
+            worker.RunWorkerCompleted += (object s, RunWorkerCompletedEventArgs args) =>
             {
+                if (args.Error != null)
+                {
+                    System.Windows.Forms.MessageBox.Show(args.Error.Message);
+                }
+
                 Results.Clear();
-                searchTextBox.Background = Brushes.LightPink;
-            }
+
+                if (args.Result != null)
+                {
+                    foreach (var results in args.Result as List<ResultListViewItem>)
+                    {
+                        Results.Add(results);
+                    }
+                }
+
+                textBlock1.Text = string.Format("files: {0}", Results.Count);
+
+                searchButton.IsEnabled = true;
+                searchButton.Background = Brushes.LightGreen;
+            };
+
+            worker.RunWorkerAsync();
         }
 
         private void resultsListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -120,7 +164,72 @@ namespace RegexSearchWin
                 from Match m in Regex.Matches(text, searchTextBox.Text)
                 select new HighLight() { Start = m.Index, Count = m.Length };
 
-            new DisplayFileWindow(text, highLights).Show();
+            var dfw = new DisplayFileWindow(file, text, highLights);
+            dfw.Title = "Matches for: " + searchTextBox.Text;
+            dfw.Show();
+        }
+
+        private void browseFolderButton_Click(object sender, RoutedEventArgs e)
+        {
+            var folderBrowser = new System.Windows.Forms.FolderBrowserDialog()
+                {
+                    Description = "select folder to index", 
+                    SelectedPath = folderPathTextBox.Text, 
+                    ShowNewFolderButton = false
+                };
+
+            if (folderBrowser.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                folderPathTextBox.Text = folderBrowser.SelectedPath;
+            }
+        }
+
+        private void AutoIndexButton_Click(object sender, RoutedEventArgs e)
+        {
+            var worker = new BackgroundWorker();
+
+            worker.DoWork += (s, args) => 
+            {
+                var ps = args.Argument as string[];
+
+                FileSystemWatcher watcher = new FileSystemWatcher(ps[0], ps[1])
+                {
+                    IncludeSubdirectories = true, 
+                    NotifyFilter = NotifyFilters.DirectoryName | NotifyFilters.FileName | NotifyFilters.LastWrite
+                };
+
+                while (true)
+                {
+                    var results = watcher.WaitForChanged(WatcherChangeTypes.All, 1000);
+
+                    if (!results.TimedOut)
+                    {
+                        System.Diagnostics.Debug.WriteLine("watcher.WaitForChanged({0}): {1} -> {2}", results.ChangeType, results.OldName, results.Name);
+
+                        this.Dispatcher.Invoke((Action)(() => 
+                        {
+                            RebuildIndex();
+                            searchButton.Background = Brushes.Pink;
+                        }));
+                    }
+                }
+            };
+
+            worker.RunWorkerAsync(new[] {folderPathTextBox.Text, filePatternTextBox.Text});
+        }
+
+        private bool IsValidRegex(string pattern)
+        {
+            try
+            {
+                new Regex(pattern);
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }
