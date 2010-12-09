@@ -57,6 +57,11 @@ namespace RegexSearchWin
 
         private void rebuildIndexButton_Click(object sender, RoutedEventArgs e)
         {
+            RebuildIndex();
+        }
+
+        private void RebuildIndex()
+        {
             rebuildIndexButton.IsEnabled = false;
 
             var worker = new BackgroundWorker();
@@ -64,12 +69,14 @@ namespace RegexSearchWin
             worker.DoWork += delegate(object s, DoWorkEventArgs args)
             {
                 args.Result = indexBuilder.BuildIndex();
-
             };
 
             worker.RunWorkerCompleted += delegate(object s, RunWorkerCompletedEventArgs args)
             {
                 this.index = args.Result as Index;
+
+                //index.SetSearcher(new BinarySearcher());
+                index.SetSearcher(new RegexSearcher());
 
                 rebuildIndexButton.IsEnabled = true;
             };
@@ -77,8 +84,10 @@ namespace RegexSearchWin
             worker.RunWorkerAsync();
         }
 
+        private string searchPattern = null;
         private void searchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            searchPattern = searchTextBox.Text;
             Results.Clear();
             searchTextBox.Background = Brushes.White;
 
@@ -92,8 +101,7 @@ namespace RegexSearchWin
                 var regex = new Regex(searchTextBox.Text);
 
                 var results =
-                    //index.BinarySearch(searchTextBox.Text);
-                    index.RegexSearch(regex);
+                    index.Search(searchPattern);
 
                 foreach (var r in results)
                 {

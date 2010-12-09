@@ -23,7 +23,8 @@ namespace RegexSearch
             Console.WriteLine("Searching...");
             sw.Restart();
 
-            var result = index.BinarySearch("Program");
+            index.SetSearcher(new BinarySearcher());
+            var result = index.Search("Program");
 
             sw.Stop();
             Console.WriteLine("... done! " + sw.Elapsed);
