@@ -24,7 +24,6 @@ namespace RegexSearchWin
     /// </summary>
     public partial class MainWindow : Window
     {
-        private IndexBuilder indexBuilder = null;
         private Index index = Index.Empty;
 
         public ObservableCollection<ResultListViewItem> Results { get; set; }
@@ -39,20 +38,6 @@ namespace RegexSearchWin
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            var path =
-                //@"C:\Treserva\Dev\Prestanda1\S3\Arende\Source\Process";
-                //@"C:\Treserva\Dev\Prestanda1\S3\Arende\Source\";
-                //@"C:\Treserva\Dev\Prestanda1\S3\";
-                @"C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\";
-            var pattern = "*.cs";
-
-            var regex = new Regex(
-                //@"(?:(?<=(?:class|namespace)\s+?)[^\s:{]+?(?=[\s:{]))|(?:())", 
-                //"class", 
-                    @"(?:(?<=(?:class|namespace)\s+?)(?<identifier>[a-zA-Z_][\w_]*?)(?=[\s:{]))|(?:(?<=(?<before>[{};]\s*?)(?<type>(?:[a-zA-Z_][\w_]*?\.)*?(?:[a-zA-Z_][\w_]*?)(?:\<[^\>]+?\>)?)\s+?)(?<identifier>[a-zA-Z_][\w_]*?)(?=(?<after>\s*?[;=])))",
-                    RegexOptions.Compiled | RegexOptions.Singleline);
-
-            indexBuilder = new RegexIndexBuilder(path, pattern, regex);
         }
 
         private void rebuildIndexButton_Click(object sender, RoutedEventArgs e)
@@ -68,6 +53,7 @@ namespace RegexSearchWin
 
             worker.DoWork += delegate(object s, DoWorkEventArgs args)
             {
+                var indexBuilder = args.Argument as IndexBuilder;
                 args.Result = indexBuilder.BuildIndex();
             };
 
@@ -81,7 +67,18 @@ namespace RegexSearchWin
                 rebuildIndexButton.IsEnabled = true;
             };
 
-            worker.RunWorkerAsync();
+            try
+            {
+                var regex = new Regex(indexPatternTextBox.Text, RegexOptions.Compiled | RegexOptions.Singleline);
+                var ib = new RegexIndexBuilder(folderPathTextBox.Text, filePatternTextBox.Text, regex);
+                worker.RunWorkerAsync(ib);
+            }
+            catch (Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show(ex.Message);
+
+                rebuildIndexButton.IsEnabled = true;
+            }
         }
 
         private string searchPattern = null;

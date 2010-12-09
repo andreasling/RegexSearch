@@ -3,9 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="350" Width="525" Loaded="Window_Loaded">
     <Grid>
-        <Button Content="Rebuild Index" Height="23" HorizontalAlignment="Right" Name="rebuildIndexButton" VerticalAlignment="Top" Width="95" Click="rebuildIndexButton_Click" />
+        <Button Content="Rebuild Index" Height="23" HorizontalAlignment="Right" Name="rebuildIndexButton" VerticalAlignment="Bottom" Width="95" Click="rebuildIndexButton_Click" />
         <TextBox Height="23" Name="searchTextBox" VerticalAlignment="Top" TextChanged="searchTextBox_TextChanged" HorizontalContentAlignment="Left" Margin="0,0,101,0" />
-        <ListView Margin="6,29,-6,0" Name="resultsListView" MouseDoubleClick="resultsListView_MouseDoubleClick" ItemsSource="{Binding Results}">
+        <ListView Margin="0,29,0,87" Name="resultsListView" MouseDoubleClick="resultsListView_MouseDoubleClick" ItemsSource="{Binding Results}">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="File" DisplayMemberBinding="{Binding FileName}" Width="200" />
@@ -13,6 +13,9 @@
                 </GridView>
             </ListView.View>
         </ListView>
+        <TextBox Height="23" Margin="0,0,101,29" Name="folderPathTextBox" VerticalAlignment="Bottom" Text="C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\" />
+        <TextBox Height="23" HorizontalAlignment="Right" Margin="0,0,45,29" Name="filePatternTextBox" VerticalAlignment="Bottom" Width="50" Text="*.cs" />
+        <TextBox Height="23" Margin="0,0,101,0" Name="indexPatternTextBox" VerticalAlignment="Bottom" Text="(?:(?&lt;=(?:class|namespace)\s+?)(?&lt;identifier&gt;[a-zA-Z_][\w_]*?)(?=[\s:{]))|(?:(?&lt;=(?&lt;before&gt;[{};]\s*?)(?&lt;type&gt;(?:[a-zA-Z_][\w_]*?\.)*?(?:[a-zA-Z_][\w_]*?)(?:\&lt;[^\&gt;]+?\&gt;)?)\s+?)(?&lt;identifier&gt;[a-zA-Z_][\w_]*?)(?=(?&lt;after&gt;\s*?[;=])))" />
         <TextBlock Height="23" Margin="0,0,303,58" Name="textBlock1" Text="TextBlock" VerticalAlignment="Bottom" />
         <Button Content="Search" Height="23" HorizontalAlignment="Right" Name="searchButton" VerticalAlignment="Top" Width="95" Click="searchButton_Click" Margin="0,-1,0,0" />
     </Grid>
