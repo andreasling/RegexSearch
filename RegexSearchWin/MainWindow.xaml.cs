@@ -81,7 +81,7 @@ namespace RegexSearchWin
             }
         }
 
-        private string searchPattern = null;
+        private string searchPattern = string.Empty;
         private void searchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             searchPattern = searchTextBox.Text;
