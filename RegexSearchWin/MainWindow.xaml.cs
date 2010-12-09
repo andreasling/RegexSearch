@@ -168,6 +168,20 @@ namespace RegexSearchWin
             dfw.Show();
         }
 
+        private void browseFolderButton_Click(object sender, RoutedEventArgs e)
+        {
+            var folderBrowser = new System.Windows.Forms.FolderBrowserDialog()
+                {
+                    Description = "select folder to index", 
+                    SelectedPath = folderPathTextBox.Text, 
+                    ShowNewFolderButton = false
+                };
+
+            if (folderBrowser.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                folderPathTextBox.Text = folderBrowser.SelectedPath;
+            }
+        }
         private bool IsValidRegex(string pattern)
         {
             try
