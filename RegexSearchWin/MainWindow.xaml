@@ -13,6 +13,7 @@
                 </GridView>
             </ListView.View>
         </ListView>
+        <TextBlock Height="23" Margin="0,0,303,58" Name="textBlock1" Text="TextBlock" VerticalAlignment="Bottom" />
         <Button Content="Search" Height="23" HorizontalAlignment="Right" Name="searchButton" VerticalAlignment="Top" Width="95" Click="searchButton_Click" Margin="0,-1,0,0" />
     </Grid>
 </Window>
