@@ -45,7 +45,7 @@
   <ItemGroup>
     <Compile Include="BinarySearcher.cs" />
     <Compile Include="RegexSearcher.cs" />
-    <Compile Include="Class1.cs" />
+    <Content Include="Class1.cs" />
     <Compile Include="Index.cs" />
     <Compile Include="IndexBuilder.cs" />
     <Compile Include="IndexSearcher.cs" />
