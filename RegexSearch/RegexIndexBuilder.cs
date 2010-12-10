@@ -38,11 +38,39 @@ namespace RegexSearch
                         select m.Value).Distinct()
                 }).ToArray();
 
-            var indexEntries =
-                from word in fileWords.SelectMany(fw => fw.Words).Distinct()
-                select new IndexEntry(word, from fw in fileWords where fw.Words.Contains(word) select fw.File);
 
-            return new Index(indexEntries);
+            var temp =
+                (from x in Enumerable.Empty<object>()
+                select new { File = string.Empty, Word = string.Empty }).ToList();
+
+            
+            foreach (var fileWord in fileWords)
+            {
+                foreach (var word in fileWord.Words)
+                {
+                    temp.Add(new { File = fileWord.File, Word = word});
+                }
+            }
+
+            var indexEntries = new List<IndexEntry>();
+            var lastWord = temp.First().Word;
+            var files = new List<string>();
+
+            foreach (var t in temp.OrderBy(t => t.Word).ToArray())
+            {
+                if (t.Word != lastWord)
+                {
+                    indexEntries.Add(new IndexEntry(lastWord, files.ToArray()));
+                    lastWord = t.Word;
+                    files.Clear();
+                }
+
+                files.Add(t.File);
+            }
+
+            indexEntries.Add(new IndexEntry(lastWord, files.ToArray()));
+
+            return new Index(indexEntries.ToArray());
         }
     }
 }
