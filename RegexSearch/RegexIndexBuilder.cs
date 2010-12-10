@@ -20,10 +20,12 @@ namespace RegexSearch
             this.indexPattern = indexPattern;
         }
 
-        public Index BuildIndex()
+        public Index BuildIndex(Action<int> reportProgress)
         {
+            var files = Directory.GetFiles(path, filePattern, SearchOption.AllDirectories);
+
             var filePaths =
-                from file in Directory.EnumerateFiles(path, filePattern, SearchOption.AllDirectories).AsParallel()
+                from file in files.WithProgressReporting(files.Count(), progress => reportProgress(progress)).AsParallel()
                 select Path.GetFullPath(file);
 
             var fileWords = (
@@ -48,6 +50,23 @@ namespace RegexSearch
                 select new IndexEntry(wordFiles.Key, wordFiles.Select(wordFile => wordFile.File).ToArray());
 
             return new Index(indexEntries.ToArray());
+        }
+    }
+
+    public static class Extensions
+    {
+        public static IEnumerable<T> WithProgressReporting<T>(this IEnumerable<T> sequence, long itemCount, Action<int> reportProgress)
+        {
+            if (sequence == null) { throw new ArgumentNullException("sequence"); }
+
+            int completed = 0;
+            foreach (var item in sequence)
+            {
+                yield return item;
+
+                completed++;
+                reportProgress((int)(((double)completed / itemCount) * 100));
+            }
         }
     }
 }

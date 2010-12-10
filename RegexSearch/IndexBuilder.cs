@@ -7,6 +7,6 @@ namespace RegexSearch
 {
     public interface IndexBuilder
     {
-        Index BuildIndex();
+        Index BuildIndex(Action<int> reportProgress);
     }
 }

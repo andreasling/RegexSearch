@@ -142,7 +142,7 @@ namespace RegexSearch
 
             var indexBuilder = new RegexIndexBuilder(path, pattern, regex);
 
-            var index = indexBuilder.BuildIndex();
+            var index = indexBuilder.BuildIndex(null);
 
             return index;
         }
