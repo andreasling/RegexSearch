@@ -48,23 +48,35 @@ namespace RegexSearchWin
         private void RebuildIndex()
         {
             rebuildIndexButton.IsEnabled = false;
+            rebuildIndexProgressBar.Value = 0;
+            rebuildIndexProgressBar.IsEnabled = true;
 
-            var worker = new BackgroundWorker();
+            var worker = new BackgroundWorker() { WorkerReportsProgress = true };
 
             worker.DoWork += delegate(object s, DoWorkEventArgs args)
             {
                 var indexBuilder = args.Argument as IndexBuilder;
-                args.Result = indexBuilder.BuildIndex();
+                args.Result = indexBuilder.BuildIndex(progress => worker.ReportProgress(progress));
             };
 
-            worker.RunWorkerCompleted += delegate(object s, RunWorkerCompletedEventArgs args)
+            worker.RunWorkerCompleted += (s, args) =>
             {
                 this.index = args.Result as Index;
 
                 //index.SetSearcher(new BinarySearcher());
                 index.SetSearcher(new RegexSearcher());
 
+                rebuildIndexProgressBar.IsIndeterminate = false;
+                rebuildIndexProgressBar.IsEnabled = false;
+
                 rebuildIndexButton.IsEnabled = true;
+            };
+
+            worker.ProgressChanged += (s, args) =>
+            {
+                rebuildIndexProgressBar.Value = args.ProgressPercentage;
+
+                rebuildIndexProgressBar.IsIndeterminate = args.ProgressPercentage >= 100;
             };
 
             try

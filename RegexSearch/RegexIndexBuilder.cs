@@ -20,10 +20,12 @@ namespace RegexSearch
             this.indexPattern = indexPattern;
         }
 
-        public Index BuildIndex()
+        public Index BuildIndex(Action<int> reportProgress)
         {
+            var files = Directory.GetFiles(path, filePattern, SearchOption.AllDirectories);
+
             var filePaths =
-                from file in Directory.EnumerateFiles(path, filePattern, SearchOption.AllDirectories).AsParallel()
+                from file in files.WithProgressReporting(files.Count(), progress => reportProgress(progress)).AsParallel()
                 select Path.GetFullPath(file);
 
             var fileWords = (
@@ -36,13 +38,35 @@ namespace RegexSearch
                         from Match m in indexPattern.Matches(File.ReadAllText(file))
                         orderby m.Value
                         select m.Value).Distinct()
-                }).ToArray();
+                });
+
+            var flatFileWords = 
+                fileWords.AsParallel().
+                SelectMany(fileWord => fileWord.Words, (fileWord, word) => new { fileWord.File, Word = word });
 
             var indexEntries =
-                from word in fileWords.SelectMany(fw => fw.Words).Distinct()
-                select new IndexEntry(word, from fw in fileWords where fw.Words.Contains(word) select fw.File);
+                from flatFileWord in flatFileWords
+                group flatFileWord by flatFileWord.Word into wordFiles
+                select new IndexEntry(wordFiles.Key, wordFiles.Select(wordFile => wordFile.File).ToArray());
 
-            return new Index(indexEntries);
+            return new Index(indexEntries.ToArray());
+        }
+    }
+
+    public static class Extensions
+    {
+        public static IEnumerable<T> WithProgressReporting<T>(this IEnumerable<T> sequence, long itemCount, Action<int> reportProgress)
+        {
+            if (sequence == null) { throw new ArgumentNullException("sequence"); }
+
+            int completed = 0;
+            foreach (var item in sequence)
+            {
+                yield return item;
+
+                completed++;
+                reportProgress((int)(((double)completed / itemCount) * 100));
+            }
         }
     }
 }

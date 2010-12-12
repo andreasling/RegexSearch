@@ -1,0 +1,109 @@
+RebuildIndex begin
+RebuildIndex finished: 00:00:10.7295361
+RebuildIndex begin
+RebuildIndex finished: 00:00:00.9475905
+RebuildIndex begin
+RebuildIndex finished: 00:00:00.9779382
+RebuildIndex begin
+RebuildIndex finished: 00:00:00.9380099
+
+
+RebuildIndex begin
+RebuildIndex finished: 00:00:01.0271332
+RebuildIndex begin
+RebuildIndex finished: 00:00:00.9723529
+RebuildIndex begin
+RebuildIndex finished: 00:00:00.9715629
+RebuildIndex begin
+RebuildIndex finished: 00:00:00.9636958
+
+
+RebuildIndex begin
+RebuildIndex finished: 00:00:00.9943313
+RebuildIndex begin
+RebuildIndex finished: 00:00:00.7585223
+RebuildIndex begin
+RebuildIndex finished: 00:00:00.7893366
+RebuildIndex begin
+RebuildIndex finished: 00:00:00.7502449
+
+
+RebuildIndex begin
+RebuildIndex finished: 00:00:01.1194141
+RebuildIndex begin
+RebuildIndex finished: 00:00:00.8137175
+RebuildIndex begin
+RebuildIndex finished: 00:00:00.8941276
+RebuildIndex begin
+RebuildIndex finished: 00:00:00.8969793
+RebuildIndex begin
+RebuildIndex finished: 00:00:00.9123843
+RebuildIndex begin
+RebuildIndex finished: 00:00:00.7775587
+RebuildIndex begin
+RebuildIndex finished: 00:00:00.7688417
+RebuildIndex begin
+RebuildIndex finished: 00:00:00.7630951
+RebuildIndex begin
+RebuildIndex finished: 00:00:00.8067580
+RebuildIndex begin
+RebuildIndex finished: 00:00:00.7658938
+RebuildIndex begin
+RebuildIndex finished: 00:00:00.7673258
+RebuildIndex begin
+RebuildIndex finished: 00:00:00.7481204
+RebuildIndex begin
+RebuildIndex finished: 00:00:00.7478899
+RebuildIndex begin
+RebuildIndex finished: 00:00:00.7516415
+
+
+
+(?:
+  (?<=
+    (?:class|namespace)\s+?
+  )
+  (?<identifier>[a-zA-Z_][\w_]*?)
+  (?=
+    [\s:{]
+  )
+)|
+(?:
+  (?<=
+    (?<before>[{};]\s*?)
+    (?<type>(?:[a-zA-Z_][\w_]*?\.)*?(?:[a-zA-Z_][\w_]*?)(?:\<[^\>]+?\>)?)
+    \s+?
+  )
+  (?<identifier>[a-zA-Z_][\w_]*?)
+  (?=
+    (?<after>\s*?[;=])
+  )
+)
+
+
+(?:
+  (?<=
+    (?:class|namespace|interface)\s+?
+  )
+  [a-zA-Z_][\w_]*?
+  (?=
+    [\s:{]
+  )
+)|
+(?:
+  (?<=
+    [{};]\s*?(?:[a-zA-Z_][\w_]*?\.)*?(?:[a-zA-Z_][\w_]*?)(?:\<[^\>]+?\>)?\s+?
+  )
+  [a-zA-Z_][\w_]*?
+  (?=
+    \s*?[;=]
+  )
+)
+
+(?:(?<=(?:namespace)\s+?)(?:[a-zA-Z_][\w_]*?\.)*?(?:[a-zA-Z_][\w_]*?)(?=[\s:{]))|
+(?:(?<=(?:class|interface)\s+?)[a-zA-Z_][\w_]*?(?=[\s:{]))|
+(?:(?<=[({};]\s*?(?:[a-zA-Z_][\w_]*?\.)*?(?:[a-zA-Z_][\w_]*?)(?:\<[^\>]+?\>)?\s+?)[a-zA-Z_][\w_]*?(?=\s*?[;=)]))|
+(?:(?<=(?:[{;]|public|private|protected|virtual|static|new|override)\s*?(?:[a-zA-Z_][\w_]*?\.)*?(?:[a-zA-Z_][\w_]*?)(?:\<[^\>]+?\>)?\s+?)[a-zA-Z_][\w_]*?(?=\s*?[;=)]|(?:\s*?{\s*?[gs]et\s*?[{;])))|
+(?:(?<=\s*?(?:[a-zA-Z_][\w_]*?\.)*?(?:[a-zA-Z_][\w_]*?)(?:\<[^\>]+?\>)?\s+?)[a-zA-Z_][\w_]*?(?=\s*?\())
+
+(?:(?<=(?:namespace)\s+?)(?:[a-zA-Z_][\w_]*?\.)*?(?:[a-zA-Z_][\w_]*?)(?=[\s:{]))|(?:(?<=(?:class|interface)\s+?)[a-zA-Z_][\w_]*?(?=[\s:{]))|(?:(?<=[({};]\s*?(?:[a-zA-Z_][\w_]*?\.)*?(?:[a-zA-Z_][\w_]*?)(?:\<[^\>]+?\>)?\s+?)[a-zA-Z_][\w_]*?(?=\s*?[;=)]))|(?:(?<=(?:[{;]|public|private|protected|virtual|static|new|override)\s*?(?:[a-zA-Z_][\w_]*?\.)*?(?:[a-zA-Z_][\w_]*?)(?:\<[^\>]+?\>)?\s+?)[a-zA-Z_][\w_]*?(?=\s*?[;=)]|(?:\s*?{\s*?[gs]et\s*?[{;])))|(?:(?<=\s*?(?:[a-zA-Z_][\w_]*?\.)*?(?:[a-zA-Z_][\w_]*?)(?:\<[^\>]+?\>)?\s+?)[a-zA-Z_][\w_]*?(?=\s*?\())
